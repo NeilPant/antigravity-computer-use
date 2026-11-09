@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Computer Use test fixture</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; max-width: 38rem; margin: 3rem auto; padding: 0 1rem; }
+    section { margin-top: 2rem; }
+    input, button { font: inherit; padding: 0.35rem 0.6rem; }
+    input { max-width: 100%; box-sizing: border-box; }
+    label { display: block; margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Computer Use test fixture</h1>
+    <p>This page uses synthetic data. Reload it to start a fresh run.</p>
+
+    <section aria-labelledby="form-heading">
+      <h2 id="form-heading">Form test</h2>
+      <form id="test-form" autocomplete="off">
+        <label for="message">Test message</label>
+        <input id="message" type="text" required>
+        <button type="submit">Submit test message</button>
+      </form>
+      <p id="form-result" role="status">No message submitted.</p>
+    </section>
+
+    <section aria-labelledby="token-heading">
+      <h2 id="token-heading">Browser to native app test</h2>
+      <button id="reveal-token" type="button">Reveal transfer token</button>
+      <p id="token-result" role="status">No transfer token revealed.</p>
+    </section>
+  </main>
+
+  <script>
+    const message = document.getElementById('message');
+    const formResult = document.getElementById('form-result');
+    const revealButton = document.getElementById('reveal-token');
+    const tokenResult = document.getElementById('token-result');
+
+    document.getElementById('test-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      formResult.textContent = `Submitted message: ${message.value}`;
+    });
+
+    revealButton.addEventListener('click', () => {
+      const bytes = crypto.getRandomValues(new Uint8Array(8));
+      const token = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+      tokenResult.textContent = `Transfer token: ${token}`;
+      revealButton.disabled = true;
+    }, { once: true });
+  </script>
+</body>
+</html>
