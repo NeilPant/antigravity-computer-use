@@ -1,6 +1,6 @@
 # Phase 1 validation runbook
 
-Yamato conducts the live tests in Antigravity App. Use fresh conversations, synthetic data, and the same chat model across comparable runs. Capture the namespaced tool calls and final observed state before ending each run. A permission denial is a valid diagnostic result. Leave the permission preset and personal browser profiles as they were.
+Yamato conducts the live tests in Antigravity App and interactive Antigravity CLI. Run preflight and scenarios 1–4 on each surface and record the results separately. Use fresh conversations, synthetic data, and the same chat model across comparable runs. Capture the namespaced tool calls and final observed state before ending each run. A permission denial is a valid diagnostic result. Leave the permission preset and personal browser profiles as they were.
 
 ## Prepare
 
@@ -11,7 +11,7 @@ Yamato conducts the live tests in Antigravity App. Use fresh conversations, synt
    /Users/yamato/venv/bin/python3 -m http.server 8765 --bind 127.0.0.1 --directory "$project/fixtures"
    ```
 
-2. For the optional Antigravity baseline, run the next section before installing the plugin. Then install the project copy using the [README](../README.md) and start a fresh project chat. Check `/computer-use` autocomplete and `/context` for the skill. Confirm actual connection in the chat tool trace. `agy plugin list` and `agy mcp list` do not prove workspace plugin discovery on the installed CLI.
+2. For the optional Antigravity baseline, run the next section before installing the plugin. Then install once with `agy plugin install` using the [README](../README.md). Check the shared installation in `agy plugin list` and **Customizations → Installed** in the App. Start fresh conversations on both hosts and check `/computer-use` autocomplete and `/context` for the skill. In the CLI, the interactive `/mcp` manager also shows connection status. Confirm actual execution in each conversation's tool trace. [Antigravity customization discovery](https://antigravity.google/docs/customization-discovery/), [Interactive MCP manager](https://antigravity.google/docs/mcp/#interactive-mcp-manager)
 3. Use this plugin preflight prompt. Review any MCP and macOS permission prompts. Cua's Accessibility and Screen Recording grants belong to `CuaDriver.app`.
 
    > /computer-use Use the plugin MCP server to check its permissions and list only TextEdit windows. Report the server name, the permission status and the window identifiers. Leave application state as it is.
@@ -20,7 +20,7 @@ Yamato conducts the live tests in Antigravity App. Use fresh conversations, synt
 
 ## Antigravity browser baseline
 
-With the plugin absent or disabled, use the built-in `/browser` command and your usual approved browser setup. Record any remote-debugging requirement. Use a test browser profile if setup is needed.
+With the plugin absent or disabled, use the built-in `/browser` command in the App composer or CLI prompt with your usual approved browser setup. Record any remote-debugging requirement. Use a test browser profile if setup is needed.
 
 > /browser Open http://127.0.0.1:8765/. Enter `native-browser-baseline` into Test message and click Submit test message. Verify the displayed result and report it.
 
@@ -68,8 +68,8 @@ Create a fresh TextEdit document named `CUA Phase 1 Transfer.txt` with an empty 
 
 Use one row per attempt. Report failures at the boundary where they occur. Examples include plugin discovery, MCP connection, Driver permission, image delivery to the model, browser attachment, action delivery, and state verification.
 
-| Run | Provenance | App / model | Tool or subagent | Target and mode | Verified state or exact error |
+| Run | Provenance | Host / model | Tool or subagent | Target and mode | Verified state or exact error |
 | --- | --- | --- | --- | --- | --- |
-| Baseline or scenario number | Antigravity built-in / raw Cua / plugin | Version and model | Namespaced call, including nested batch actions | Window or tab, background or foreground | Evidence from fresh observation |
+| Baseline or scenario number | Antigravity built-in / raw Cua / plugin | App or CLI, version and model | Namespaced call, including nested batch actions | Window or tab, background or foreground | Evidence from fresh observation |
 
 For plugin passes, `/browser`, shell automation, direct file edits, and operator actions cannot stand in for any tested step. Operator setup and inspection are allowed. If troubleshooting requires a raw Cua run, use the same fixture and record it separately. Once the App has connected, the presence of cached tool schemas under `~/.gemini/antigravity/mcp/antigravity-computer-use_cua-driver/` can corroborate server discovery. The chat trace is the evidence of execution.

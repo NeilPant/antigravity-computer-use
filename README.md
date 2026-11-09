@@ -1,26 +1,28 @@
 # Antigravity Computer Use
 
-A native Antigravity plugin for operating macOS apps and browser pages from chat, including tasks that cross between them. Antigravity owns the conversation and decides what to do. The installed Cua Driver supplies window observations, browser state, and UI actions over its existing stdio MCP server.
+A plugin for Antigravity App and Antigravity CLI that operates macOS apps and browser pages from chat, including tasks that cross between them. Antigravity owns the conversation and decides what to do. The installed Cua Driver supplies window observations, browser state, and UI actions over its existing stdio MCP server. IDE support is deferred.
 
 **Status.** Phase 1 is packaged and verified non-interactively. Live Antigravity validation is pending. Start with the [live test runbook](docs/VALIDATION.md) and record results in the [Phase 1 checkpoint](docs/ROADMAP.md).
 
-## Install for one project
+## Install once for App and CLI
 
-Requires Antigravity App with native plugin support, its `agy` CLI for validation, and the standard macOS Cua Driver installation. The candidate was checked against Antigravity App 2.29.0, `agy` 1.5.3, and Cua Driver 0.43.2. Browser validation uses a signed system Chrome installation with a disposable Driver-owned profile. If Cua is installed at a different path, update `command` in `plugin/mcp_config.json` before installing.
+Requires Antigravity App or interactive `agy`, plus the standard macOS Cua Driver installation. The offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed system Chrome installation with a disposable Driver-owned profile. If Cua is installed at a different path, update `command` in `plugin/mcp_config.json` before installing.
 
-In Terminal, run the following. The copy is scoped to this Antigravity project.
+Run this in Terminal. The CLI installs into Antigravity's shared user plugin directory, `~/.gemini/config/plugins/`, so App and CLI can both use the plugin across projects. If you made an earlier project-scoped copy, remove `.agents/plugins/antigravity-computer-use/` from that project first. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
 
 ```sh
 project='/Users/yamato/yamato-samurai-sanctum/samurai-armory/tools/Antigravity Computer Use'
-target="$project/.agents/plugins/antigravity-computer-use"
 agy plugin validate --strict "$project/plugin" &&
-  mkdir -p "$target" &&
-  cp -R "$project/plugin/." "$target/"
+  agy plugin install "$project/plugin" &&
+  agy plugin list
 ```
 
-Open the project in Antigravity App and start a fresh conversation. Type `/computer-use` in the composer. The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a prompt from the [runbook](docs/VALIDATION.md) and keep Antigravity's normal permission prompts enabled. To update this copy, rerun the commands and start a new conversation. To remove it, close the test conversation and remove the copied `antigravity-computer-use` directory from `.agents/plugins/`.
+Start a fresh conversation on either surface.
 
-For availability across projects, use `agy plugin install "$project/plugin"` instead. Check `agy plugin list` and start a fresh App chat. Disable or uninstall that copy from Antigravity Customizations or with `agy plugin uninstall antigravity-computer-use`. Keep one copy active when validating. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
+- **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and type `/computer-use` in the composer.
+- **CLI:** Run `cd "$project" && agy` and type `/computer-use` in the interactive prompt.
+
+The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a prompt from the [runbook](docs/VALIDATION.md) with Antigravity's normal permission prompts enabled. To remove the shared installation, use App Customizations or `agy plugin uninstall antigravity-computer-use`.
 
 ## Package
 

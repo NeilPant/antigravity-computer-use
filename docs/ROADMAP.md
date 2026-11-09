@@ -1,6 +1,6 @@
 # Roadmap and Phase 1 checkpoint
 
-**Checkpoint — 2026-11-10, plugin v0.1.0.** The candidate is ready for live validation. Engineering and offline checks are complete. Yamato owns App installation, permissions, and all live GUI runs. The workspace package can be installed as a single project copy using the [README](../README.md).
+**Checkpoint — 2026-11-10, plugin v0.1.0.** The candidate targets Antigravity App and Antigravity CLI. IDE support is deferred. Engineering and offline checks are complete. Yamato owns installation, permissions, and live validation on both surfaces. Use the [shared CLI installation](../README.md) for both hosts.
 
 ## Phase 1 decisions
 
@@ -22,12 +22,13 @@
 | `agy plugin validate --strict --json` | Passed with CLI 1.5.3 on the source package and a staged workspace copy in a path with spaces. The loader recognizes one skill and one MCP server. A generic icon is the only note. |
 | Cua tool compatibility | The configured macOS executable exists. Cua Driver 0.43.2 advertises all 32 configured tools. The browser preparation, exact binding, window capture, stale token, and session behavior in the runbook use the installed schemas. |
 | Local browser fixture | An ephemeral loopback HTTP server returned the fixture with status 200. Non-GUI JavaScript tests exercised literal form submission, unique random transfer tokens, and reset between page contexts. |
-| Workspace discovery | Pending in App 2.29.0. CLI listing commands only establish what they report at CLI scope and do not confirm workspace discovery. |
-| Live operation | Pending. This includes MCP handshake in App, model access to screenshots, background actions, page binding, and the mixed workflow. The Driver daemon was stopped during offline inspection. |
+| Shared installation and discovery | `agy plugin install` writes to the user plugin directory shared by App and CLI. Confirm discovery in fresh conversations in App 2.29.0 and interactive CLI 1.5.3 during live validation. |
+| Live operation | Pending on both surfaces. This includes the MCP handshake, model access to screenshots, background actions, page binding, and the mixed workflow. The Driver daemon was stopped during offline inspection. |
 
 Use the [validation runbook](VALIDATION.md) to record each live attempt. The key acceptance result is a trace from one Antigravity conversation showing the plugin observe the browser, obtain a fresh value, act on an exact native window, and verify that value at both ends. A separate screenshot-only run tests whether the model has usable pixels.
 
 ## After live validation
 
-- **Close Phase 1 gaps.** Isolate failures by boundary and compare the failing tool with raw Cua on the same fixture. Update the plugin only where the evidence calls for it, then rerun the failed scenario and the mixed workflow. Record which App and browser combinations passed. Treat existing-profile attachment and native `/browser` interoperability as separate investigations.
+- **Close Phase 1 gaps.** Isolate failures by boundary and compare the failing tool with raw Cua on the same fixture. Update the plugin only where the evidence calls for it, then rerun the failed scenario and the mixed workflow. Record App and CLI results separately with the browser version. Treat existing-profile attachment and native `/browser` interoperability as separate investigations.
+- **Marketplace logo & assets.** When ready for cosmetic polish or Marketplace distribution, add a dedicated square logo under `assets/logo.svg` (or `.png`). Per Antigravity & Google Marketplace asset guidance: must be at least 128×128 pixels (square), transparent background, high contrast across both light/dark themes, and roughly 10% empty margin baked in (the UI frame center-crops and adds no padding). Reference via `"logo": "assets/logo.svg"` in `plugin.json` to eliminate the generic icon fallback note in strict validation.
 - **Phase 2.** Once the functional baseline passes, measure comparable Antigravity and Codex runs. Use the traces to evaluate latency, call count, approval overhead, and image handling. Tune batching, observations, and tool exposure against the same verification criteria.

@@ -2,6 +2,6 @@
   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "antigravity-computer-use",
   "displayName": "Computer Use",
-  "description": "Operate and verify macOS applications and browser pages from Antigravity chat using Cua Driver.",
+  "description": "Operate and verify macOS applications and browser pages from Antigravity App and CLI using Cua Driver.",
   "version": "0.1.0"
 }
