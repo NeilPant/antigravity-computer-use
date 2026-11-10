@@ -2,7 +2,7 @@
 
 A plugin for Antigravity App and Antigravity CLI that operates macOS apps and browser pages from chat, including tasks that cross between them. Antigravity owns the conversation and decides what to do. The installed Cua Driver supplies window observations, browser state, and UI actions over its existing stdio MCP server. IDE support is deferred.
 
-**Status.** Phase 1 is packaged and verified non-interactively. Live Antigravity validation is pending. Start with the [live test runbook](docs/VALIDATION.md) and record results in the [Phase 1 checkpoint](docs/ROADMAP.md).
+**Status.** Phase 1 established end-to-end functionality in a live Antigravity browser task. Phase 2 focuses on speed, reliable browser routing, and clearer recovery when a target cannot be reached. See the [roadmap](docs/ROADMAP.md) and [live test runbook](docs/VALIDATION.md).
 
 ## Install once for App and CLI
 

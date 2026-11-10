@@ -1,6 +1,6 @@
 # Roadmap and Phase 1 checkpoint
 
-**Checkpoint — 2026-11-10, plugin v0.1.0.** The candidate targets Antigravity App and Antigravity CLI. IDE support is deferred. Engineering and offline checks are complete; live validation on both surfaces is pending. Use the [shared CLI installation](../README.md) for both hosts.
+**Checkpoint — 2026-11-10, plugin v0.1.0.** A live Antigravity run completed a read-only browser task through the plugin, establishing the functional baseline. The plugin targets Antigravity App and CLI through a [shared installation](../README.md). IDE support is deferred.
 
 ## Phase 1 decisions
 
@@ -23,12 +23,16 @@
 | Cua tool compatibility | The configured macOS executable exists. Cua Driver 0.43.2 advertises all 32 configured tools. The browser preparation, exact binding, window capture, stale token, and session behavior in the runbook use the installed schemas. |
 | Local browser fixture | An ephemeral loopback HTTP server returned the fixture with status 200. Non-GUI JavaScript tests exercised literal form submission, unique random transfer tokens, and reset between page contexts. |
 | Shared installation and discovery | `agy plugin install` writes to the user plugin directory shared by App and CLI. Confirm discovery in fresh conversations in App 2.29.0 and interactive CLI 1.5.3 during live validation. |
-| Live operation | Pending on both surfaces. This includes the MCP handshake, model access to screenshots, background actions, page binding, and the mixed workflow. The Driver daemon was stopped during offline inspection. |
+| Live operation | A live Antigravity run completed the browser reading task. It repeatedly used Cua native window snapshots to read page content and spent over 11 minutes on computer use. The runbook tracks coverage of other scenarios separately for App and CLI. |
 
 Use the [validation runbook](VALIDATION.md) to record each live attempt. The key acceptance result is a trace from one Antigravity conversation showing the plugin observe the browser, obtain a fresh value, act on an exact native window, and verify that value at both ends. A separate screenshot-only run tests whether the model has usable pixels.
 
-## After live validation
+## Phase 2 — Speed and reliability
 
-- **Close Phase 1 gaps.** Isolate failures by boundary and compare the failing tool with raw Cua on the same fixture. Update the plugin only where the evidence calls for it, then rerun the failed scenario and the mixed workflow. Record App and CLI results separately with the browser version. Treat existing-profile attachment and native `/browser` interoperability as separate investigations.
+- **Give browser work a dedicated route.** Evaluate a browser entry point backed by Cua's typed tools for exact-tab binding, scoped page reads, and tab screenshots. Reuse the same workflow for the browser leg of mixed tasks. Surface attachment failures clearly and keep native window controls available for authorized desktop work.
+- **Measure before adding code.** Use the Antigravity and Codex transcripts to compare tool routes, elapsed time, call count, approvals, retries, and result coverage. Repeat the same task in Antigravity with the typed browser route. Use existing Cua mechanisms and tune tool exposure or batching where the trace shows a benefit. Implement a new Cua-backed operation only when a measured gap calls for it.
+- **Verify across hosts.** Record App and CLI results separately. Recheck native and mixed workflows as routing changes, and track signed-in browser attachment and Antigravity's built-in `/browser` separately from plugin execution.
+
+## Distribution
+
 - **Marketplace logo & assets.** When ready for cosmetic polish or Marketplace distribution, add a dedicated square logo under `assets/logo.svg` (or `.png`). Per Antigravity & Google Marketplace asset guidance: must be at least 128×128 pixels (square), transparent background, high contrast across both light/dark themes, and roughly 10% empty margin baked in (the UI frame center-crops and adds no padding). Reference via `"logo": "assets/logo.svg"` in `plugin.json` to eliminate the generic icon fallback note in strict validation.
-- **Phase 2.** Once the functional baseline passes, measure comparable Antigravity and Codex runs. Use the traces to evaluate latency, call count, approval overhead, and image handling. Tune batching, observations, and tool exposure against the same verification criteria.
