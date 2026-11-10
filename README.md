@@ -8,10 +8,10 @@ A plugin for Antigravity App and Antigravity CLI that operates macOS apps and br
 
 Requires Antigravity App or interactive `agy`, plus the standard macOS Cua Driver installation. The offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed system Chrome installation with a disposable Driver-owned profile. If Cua is installed at a different path, update `command` in `plugin/mcp_config.json` before installing.
 
-Run this in Terminal. The CLI installs into Antigravity's shared user plugin directory, `~/.gemini/config/plugins/`, so App and CLI can both use the plugin across projects. If you made an earlier project-scoped copy, remove `.agents/plugins/antigravity-computer-use/` from that project first. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
+From the root of your local checkout, run this in Terminal. The CLI installs into Antigravity's shared user plugin directory, `~/.gemini/config/plugins/`, so App and CLI can both use the plugin across projects. If you made an earlier project-scoped copy, remove `.agents/plugins/antigravity-computer-use/` from that project first. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
 
 ```sh
-project='/Users/yamato/yamato-samurai-sanctum/samurai-armory/tools/Antigravity Computer Use'
+project="$PWD"
 agy plugin validate --strict "$project/plugin" &&
   agy plugin install "$project/plugin" &&
   agy plugin list
@@ -19,14 +19,18 @@ agy plugin validate --strict "$project/plugin" &&
 
 Start a fresh conversation on either surface.
 
-- **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and type `/computer-use` in the composer.
-- **CLI:** Run `cd "$project" && agy` and type `/computer-use` in the interactive prompt.
+- **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and select the plugin’s `computer-use` skill from composer autocomplete.
+- **CLI:** Run `cd "$project" && agy` and type `/antigravity-computer-use:computer-use` in the interactive prompt.
 
 The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a prompt from the [runbook](docs/VALIDATION.md) with Antigravity's normal permission prompts enabled. To remove the shared installation, use App Customizations or `agy plugin uninstall antigravity-computer-use`.
 
 ## Package
 
-- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, and `/computer-use` skill.
+- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, and `computer-use` skill.
 - [`fixtures/index.html`](fixtures/index.html) supplies the local browser form and one-time transfer token used in testing.
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.
+
+## License
+
+This project is available under the [MIT License](LICENSE).

@@ -1,6 +1,6 @@
 # Roadmap and Phase 1 checkpoint
 
-**Checkpoint — 2026-11-10, plugin v0.1.0.** The candidate targets Antigravity App and Antigravity CLI. IDE support is deferred. Engineering and offline checks are complete. Yamato owns installation, permissions, and live validation on both surfaces. Use the [shared CLI installation](../README.md) for both hosts.
+**Checkpoint — 2026-11-10, plugin v0.1.0.** The candidate targets Antigravity App and Antigravity CLI. IDE support is deferred. Engineering and offline checks are complete; live validation on both surfaces is pending. Use the [shared CLI installation](../README.md) for both hosts.
 
 ## Phase 1 decisions
 
@@ -8,7 +8,7 @@
 | --- | --- |
 | Where does the agent loop run? | `idea/` puts reasoning, action selection, and verification in Antigravity chat. Antigravity's native plugin format bundles skills and local MCP servers. Use its existing model and tool host. There is no separate agent, SDK dependency, browser service, or custom UI in this candidate. |
 | What is the thinnest connection? | Cua documents direct Antigravity MCP registration. The installed binary's help and the tagged Rust implementation agree that `mcp` on macOS proxies stdio to `CuaDriver.app`, which owns the OS permissions. Point the plugin at the standard app-bundle executable. This avoids relying on the GUI's shell `PATH`. |
-| What belongs in the skill? | MCP tool metadata exposes individual operations. The Antigravity skill adds task-level targeting, image fallback, browser binding, state verification, session cleanup, and provenance. Antigravity's on-demand skill discovery also gives the operator `/computer-use` as an explicit test entry point. |
+| What belongs in the skill? | MCP tool metadata exposes individual operations. The Antigravity skill adds task-level targeting, image fallback, browser binding, state verification, session cleanup, and provenance. CLI 1.5.3 autocomplete confirmed the plugin-qualified test entry point `/antigravity-computer-use:computer-use`. |
 | Which tool surface ships? | Use the Driver's window and browser primitives directly. Antigravity's `enabledTools` list exposes discovery, capture, verification, common UI actions, bounded Cua steps, and typed browser actions. It leaves Driver management, scripts, clipboard access, recordings, and history out of the normal tool catalog. The list controls exposure in Antigravity. It is not a Cua permission sandbox, and `run_steps` can execute supported nested actions. |
 | How is browser execution attributed? | `/browser` is Antigravity's own Chrome DevTools subagent. The plugin independently exposes Cua's typed browser tools and native window controls. The two are separate test lanes. Use a Driver-owned `isolated_new` browser for repeatable plugin tests. The candidate provides no existing-profile launch grant, and Antigravity's tool approval cannot confer one. Cua browser calls do not inherit `/browser` site rules. |
 | What would justify an adapter? | A reproducible gap in the native connection or result handling. First test the stock MCP path, then Cua's existing image size and file options when relevant. Keep the minimal package if it passes. Evaluate a compatibility layer only against a failing case that those options cannot solve. |

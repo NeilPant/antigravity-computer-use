@@ -1,6 +1,6 @@
 ---
 name: computer-use
-description: Use Cua Driver through this plugin when asked to observe, operate, or verify a real macOS application, browser page, system UI, or a workflow spanning those surfaces. Invoke explicitly with /computer-use for a plugin validation run.
+description: Observe and operate macOS apps, system UI, and browser pages with Cua Driver.
 ---
 
 # Computer Use
