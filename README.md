@@ -31,6 +31,10 @@ The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a pro
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.
 
+## Contributing
+
+See the [contribution guide](CONTRIBUTING.md) for how to agree on scope and demonstrate that a change works.
+
 ## License
 
 This project is available under the [MIT License](LICENSE).
