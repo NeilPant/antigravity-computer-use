@@ -1,5 +1,7 @@
 # Phase 1 validation runbook
 
+For the optimization candidate, first inspect the plugin-namespaced `get_browser_state` bind result in scenario 3. It must show the exact `target_id` and the intended `tab_id` in model-visible text, and the subsequent navigation must use those returned values. If either ID is absent, stop without guessing, end the task session, and record the text result, structured result if available, and error. Compare time and tokens only after the browser form succeeds. The 2026-11-11 implementation was checked locally but has not been run interactively in Antigravity.
+
 Run live tests in Antigravity App and interactive Antigravity CLI. Run preflight and scenarios 1–4 on each surface and record the results separately. Use fresh conversations, synthetic data, and the same chat model across comparable runs. Capture the namespaced tool calls and final observed state before ending each run. A permission denial is a valid diagnostic result. Leave the permission preset and personal browser profiles as they were.
 
 ## Prepare

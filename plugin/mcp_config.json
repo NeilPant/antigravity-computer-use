@@ -1,8 +1,12 @@
 {
   "mcpServers": {
     "cua-driver": {
-      "command": "/Applications/CuaDriver.app/Contents/MacOS/cua-driver",
-      "args": ["mcp"],
+      "command": "python3",
+      "args": [
+        "${PLUGIN_ROOT}/scripts/cua_mcp_proxy.py",
+        "/Applications/CuaDriver.app/Contents/MacOS/cua-driver",
+        "mcp"
+      ],
       "enabledTools": [
         "check_permissions",
         "get_guide",

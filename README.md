@@ -6,7 +6,7 @@ A plugin for Antigravity App and Antigravity CLI that operates macOS apps and br
 
 ## Install once for App and CLI
 
-Requires Antigravity App or interactive `agy`, plus the standard macOS Cua Driver installation. The offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed system Chrome installation with a disposable Driver-owned profile. If Cua is installed at a different path, update `command` in `plugin/mcp_config.json` before installing.
+Requires Antigravity App or interactive `agy`, Python 3, and the standard macOS Cua Driver installation. The earlier offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed Chromium installation with a disposable Driver-owned profile. If Cua is installed at a different path, update its path in `args` in `plugin/mcp_config.json` before installing.
 
 From the root of your local checkout, run this in Terminal. The CLI installs into Antigravity's shared user plugin directory, `~/.gemini/config/plugins/`, so App and CLI can both use the plugin across projects. If you made an earlier project-scoped copy, remove `.agents/plugins/antigravity-computer-use/` from that project first. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
 
@@ -26,10 +26,11 @@ The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a pro
 
 ## Package
 
-- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, and `computer-use` skill.
+- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, `computer-use` skill, and a stdio relay that makes browser binding IDs visible in MCP text output while forwarding other responses.
 - [`fixtures/index.html`](fixtures/index.html) supplies the local browser form and one-time transfer token used in testing.
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.
+- [`docs/OPTIMIZATION_PLAN.md`](docs/OPTIMIZATION_PLAN.md) tracks the speed work, implementation status, and remaining browser result-contract investigation.
 
 ## Contributing
 
