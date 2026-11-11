@@ -2,6 +2,10 @@
 
 Written: 2026-11-10. Implementation update: 2026-11-11.
 
+## 0.3.0 follow-up
+
+See [the validation record](VALIDATION_0_3_0.md) for tested changes and current blockers. The installed Driver 0.44 rejects browser tools from `run_script`; browser-bootstrap scripts in the separate speed draft are not executable. No global fast-path or permission changes are part of this release. Native scripts are now exposed. The relay projects the actual browser control record (including errors/setup details), rather than requiring one guessed tab schema. Restart the MCP connection after updating.
+
 ## Implementation status
 
 **2026-11-11 follow-up:** A bundled stdio MCP relay now projects the `target_id`, `binding_quality`, and up to 16 returned `tab_id` values from a successful Cua browser bind's `structuredContent` into its text result. It leaves the structured result and non-bind results intact. This addresses the specific missing-ID symptom observed in Antigravity without changing the Cua Driver or adding a second agent. Four response-contract tests pass, including multiple tabs, absent IDs, errors, and image passthrough. A read-only MCP smoke test through the relay completed initialization and `check_permissions` with exit code 0; strict plugin validation passed. Antigravity was not operated interactively after this change, as the user requested, so the browser form, native/mixed workflows, and before/after speed and token targets remain unverified. The relay is a targeted implementation of P0's adapter option; the exact source of the old text omission remains unconfirmed.

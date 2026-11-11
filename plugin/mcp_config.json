@@ -30,6 +30,7 @@
         "hotkey",
         "invoke_menu",
         "run_steps",
+        "run_script",
         "browser_prepare",
         "get_browser_state",
         "browser_navigate",

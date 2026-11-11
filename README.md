@@ -17,7 +17,7 @@ agy plugin validate --strict "$project/plugin" &&
   agy plugin list
 ```
 
-Start a fresh conversation on either surface.
+After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.3.0`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface.
 
 - **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and select the plugin’s `computer-use` skill from composer autocomplete.
 - **CLI:** Run `cd "$project" && agy` and type `/antigravity-computer-use:computer-use` in the interactive prompt.
@@ -26,7 +26,7 @@ The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a pro
 
 ## Package
 
-- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, `computer-use` skill, and a stdio relay that makes browser binding IDs visible in MCP text output while forwarding other responses.
+- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, `computer-use` skill, and a stdio relay that exposes complete browser binding/setup control metadata in the first MCP text block while preserving original structured results, refusals, and images. Native `run_script` is exposed; browser tools remain direct calls because Driver 0.44 does not support them inside scripts.
 - [`fixtures/index.html`](fixtures/index.html) supplies the local browser form and one-time transfer token used in testing.
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.
