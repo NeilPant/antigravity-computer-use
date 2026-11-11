@@ -31,7 +31,7 @@ class BindProjectionTests(unittest.TestCase):
                 original = copy.deepcopy(msg['result']['structuredContent'])
                 proxy.expose_browser_binding(msg, request())
                 text = msg['result']['content'][0]['text']
-                self.assertTrue(text.startswith('Cua plugin relay 0.3.0'))
+                self.assertTrue(text.startswith('Cua plugin relay 0.4.0'))
                 self.assertIn(json.dumps(original, separators=(',', ':')), text)
                 self.assertEqual(msg['result']['structuredContent'], original)
                 self.assertTrue(text.endswith('original output'))

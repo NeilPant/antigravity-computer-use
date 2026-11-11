@@ -32,6 +32,7 @@
         "run_steps",
         "run_script",
         "browser_prepare",
+        "browser_flow",
         "get_browser_state",
         "browser_navigate",
         "browser_click",

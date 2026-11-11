@@ -6,7 +6,7 @@ A plugin for Antigravity App and Antigravity CLI that operates macOS apps and br
 
 ## Install once for App and CLI
 
-Requires Antigravity App or interactive `agy`, Python 3, and the standard macOS Cua Driver installation. The earlier offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed Chromium installation with a disposable Driver-owned profile. If Cua is installed at a different path, update its path in `args` in `plugin/mcp_config.json` before installing.
+Requires Antigravity App or interactive `agy`, Python 3.8 or later, and the standard macOS Cua Driver installation. The earlier offline checks used `agy` 1.5.3 and Cua Driver 0.43.2. Browser validation uses a signed Chromium-based browser with a disposable Driver-owned profile; a running Brave process can serve as the executable anchor. If Cua is installed at a different path, update its path in `args` in `plugin/mcp_config.json` before installing.
 
 From the root of your local checkout, run this in Terminal. The CLI installs into Antigravity's shared user plugin directory, `~/.gemini/config/plugins/`, so App and CLI can both use the plugin across projects. If you made an earlier project-scoped copy, remove `.agents/plugins/antigravity-computer-use/` from that project first. [Antigravity plugin installation](https://antigravity.google/docs/plugins/)
 
@@ -17,7 +17,7 @@ agy plugin validate --strict "$project/plugin" &&
   agy plugin list
 ```
 
-After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.3.0`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface.
+After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.4.0`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface.
 
 - **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and select the plugin’s `computer-use` skill from composer autocomplete.
 - **CLI:** Run `cd "$project" && agy` and type `/antigravity-computer-use:computer-use` in the interactive prompt.
@@ -26,7 +26,8 @@ The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a pro
 
 ## Package
 
-- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, `computer-use` skill, and a stdio relay that exposes complete browser binding/setup control metadata in the first MCP text block while preserving original structured results, refusals, and images. Native `run_script` is exposed; browser tools remain direct calls because Driver 0.44 does not support them inside scripts.
+- [`plugin/`](plugin/) contains the installable manifest, Cua MCP declaration, `computer-use` skill, and a stdio relay. The relay's `browser_flow` tool batches typed browser operations and keeps the current tab and page snapshot across calls. Direct Cua tools and native `run_script` remain available.
+- [Browser flow](docs/BROWSER_FLOW.md) compares the traces and shows how to check batching, retained state, and page excerpts manually.
 - [`fixtures/index.html`](fixtures/index.html) supplies the local browser form and one-time transfer token used in testing.
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.

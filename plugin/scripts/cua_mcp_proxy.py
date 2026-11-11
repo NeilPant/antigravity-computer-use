@@ -5,9 +5,10 @@ import json
 import subprocess
 import sys
 import threading
+import uuid
 
 
-RELAY_VERSION = "0.3.0"
+RELAY_VERSION = "0.4.0"
 MAX_PROJECTION_BYTES = 24000
 
 
@@ -69,44 +70,156 @@ def expose_browser_binding(message, request):
 
 
 def main():
+    from browser_flow import BrowserFlows, FlowError, TOOL
+
     command = sys.argv[1:] or ['/Applications/CuaDriver.app/Contents/MacOS/cua-driver', 'mcp']
     child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                             stderr=sys.stderr.buffer, bufsize=0)
-    pending = {}
+                             stderr=sys.stderr.buffer)
+    flows = BrowserFlows()
+    pending, internal = {}, {}
+    active = None
     lock = threading.Lock()
+    driver_write_lock, host_write_lock = threading.Lock(), threading.Lock()
+    disconnected = threading.Event()
 
-    def to_child():
+    def encode(message):
+        return (json.dumps(message, separators=(',', ':'), ensure_ascii=False) + '\n').encode()
+
+    def to_driver(raw):
+        with driver_write_lock:
+            child.stdin.write(raw)
+            child.stdin.flush()
+
+    def to_host(raw):
+        with host_write_lock:
+            sys.stdout.buffer.write(raw)
+            sys.stdout.buffer.flush()
+
+    def key(ident):
+        return (type(ident).__name__, ident)
+
+    def response(ident, result):
+        to_host(encode({'jsonrpc': '2.0', 'id': ident, 'result': result}))
+
+    def send(name, args, timeout):
+        # Use a private request ID so nested calls never appear as host tool calls.
+        ident = 'cua-flow-' + uuid.uuid4().hex
+        event, slot = threading.Event(), []
+        with lock:
+            internal[key(ident)] = (event, slot)
+        try:
+            to_driver(encode({'jsonrpc': '2.0', 'id': ident, 'method': 'tools/call',
+                              'params': {'name': name, 'arguments': args}}))
+        except OSError as error:
+            with lock:
+                internal.pop(key(ident), None)
+            raise FlowError('Cua Driver transport closed.') from error
+        if not event.wait(timeout):
+            # Keep the in-flight marker until the Driver replies. Never replay a mutation.
+            raise FlowError(f'{name} timed out; its effect is unknown. Wait for the Driver or reconnect.')
+        if not slot:
+            raise FlowError('Cua Driver disconnected; the last operation may have run.')
+        reply = slot[0]
+        if not isinstance(reply.get('result'), dict):
+            raise FlowError(f'{name} returned an MCP error.', {'structuredContent': reply.get('error')})
+        return reply['result']
+
+    def tool_error(message):
+        return {'isError': True, 'content': [{'type': 'text', 'text': message}]}
+
+    def run_flow(ident, args, cancelled):
+        nonlocal active
+        try:
+            result = flows.run(args, send, cancelled)
+        except Exception:
+            result = tool_error('Browser flow failed internally. Reobserve the tab before retrying any action.')
+            flows.end(None)
+        with lock:
+            active = None
+            if not disconnected.is_set():
+                response(ident, result)
+
+    def from_host():
+        nonlocal active
         try:
             for raw in sys.stdin.buffer:
                 try:
                     msg = json.loads(raw)
-                    if msg.get('method') == 'tools/call' and 'id' in msg:
-                        with lock:
-                            pending[(type(msg['id']).__name__, msg['id'])] = msg
+                    method = msg.get('method')
+                    params = msg.get('params') or {}
+                    name = params.get('name')
+                    ident = msg.get('id')
                 except (ValueError, TypeError, AttributeError):
-                    pass
-                child.stdin.write(raw)
-                child.stdin.flush()
+                    to_driver(raw)
+                    continue
+                with lock:
+                    if method == 'notifications/cancelled' and active and params.get('requestId') == active[0]:
+                        active[1].set()
+                        continue
+                    if method == 'tools/call' and 'id' in msg:
+                        if active or internal:
+                            response(ident, tool_error('A browser flow is still running or waiting on Cua Driver.'))
+                            continue
+                        if name == TOOL['name']:
+                            if any(req.get('method') == 'tools/call' for req in pending.values()):
+                                response(ident, tool_error('Wait for the previous Driver tool call to finish.'))
+                                continue
+                            cancelled = threading.Event()
+                            active = (ident, cancelled)
+                            threading.Thread(target=run_flow, args=(ident, params.get('arguments'), cancelled),
+                                             daemon=True).start()
+                            continue
+                        flows.invalidate(name, params.get('arguments') or {})
+                        if name == 'end_session':
+                            flows.end((params.get('arguments') or {}).get('session'))
+                    if method in ('tools/call', 'tools/list') and 'id' in msg:
+                        pending[key(ident)] = msg
+                to_driver(raw)
         except (BrokenPipeError, OSError):
             pass
         finally:
-            child.stdin.close()
-
-    writer = threading.Thread(target=to_child, daemon=True)
-    writer.start()
-    for raw in child.stdout:
-        try:
-            msg = json.loads(raw)
-            ident = msg.get('id')
+            disconnected.set()
             with lock:
-                request = pending.pop((type(ident).__name__, ident), None)
-            if request and (request['params']['name'] == 'get_browser_state' or request['params']['name'].startswith('browser_')):
-                expose_browser_binding(msg, request)
-                raw = (json.dumps(msg, separators=(',', ':'), ensure_ascii=False) + '\n').encode()
-        except (ValueError, TypeError, AttributeError, KeyError):
-            pass
-        sys.stdout.buffer.write(raw)
-        sys.stdout.buffer.flush()
+                if active:
+                    active[1].set()
+            with driver_write_lock:
+                child.stdin.close()
+
+    writer = threading.Thread(target=from_host, daemon=True)
+    writer.start()
+    try:
+        for raw in child.stdout:
+            try:
+                msg = json.loads(raw)
+                if 'id' in msg and ('result' in msg or 'error' in msg):
+                    with lock:
+                        ident = key(msg['id'])
+                        local = internal.pop(ident, None)
+                        request = pending.pop(ident, None)
+                    if local:
+                        event, slot = local
+                        slot.append(msg)
+                        event.set()
+                        continue
+                    if request:
+                        params = request.get('params') or {}
+                        name = params.get('name')
+                        if request.get('method') == 'tools/list' and not params.get('cursor'):
+                            tools = (msg.get('result') or {}).get('tools')
+                            if isinstance(tools, list) and not any(tool.get('name') == TOOL['name'] for tool in tools):
+                                tools.append(TOOL)
+                                raw = encode(msg)
+                        elif isinstance(name, str) and (name == 'get_browser_state' or name.startswith('browser_')):
+                            expose_browser_binding(msg, request)
+                            raw = encode(msg)
+            except (ValueError, TypeError, AttributeError, KeyError):
+                pass
+            to_host(raw)
+    finally:
+        with lock:
+            for event, _ in internal.values():
+                event.set()
+            internal.clear()
     writer.join(timeout=1)
     return child.wait()
 
