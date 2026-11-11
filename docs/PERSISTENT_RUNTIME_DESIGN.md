@@ -1,6 +1,6 @@
 # Proposed persistent Computer Use runtime
 
-Status: architecture proposal, not an implemented runtime or a measured speedup. Requested by Yamato after the failed 0.4.x browsing comparisons. Keep the existing 0.4.1 repairs separate from this design work.
+Status: current architecture proposal; implementation has not started. Requested after the failed 0.4.x browsing comparisons. This supersedes the earlier optimization plan for future execution architecture. Start implementation only as a future agreed task. Keep the existing 0.4.1 repairs separate from this design work; no runtime speedup is claimed. See the [documentation guide](README.md) for the related evidence and source review.
 
 ## Decision
 

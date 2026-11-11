@@ -1,5 +1,7 @@
 # Browser flow: trace comparison and manual checks
 
+**Scope:** the existing bounded browser-flow mechanism and its manual checks. Live testing found that the 0.4.1 repairs did not deliver complete efficient browsing; see [the validation record](VALIDATION_0_4_1.md). The [persistent runtime design](PERSISTENT_RUNTIME_DESIGN.md) is the proposed successor architecture and remains unimplemented. Use the [documentation guide](README.md) before choosing future work.
+
 This change is based on the supplied Codex and Antigravity tool traces. Both addressed the same One Piece thread, but the recordings do not establish equal coverage, identical browser state, wall time, or token usage.
 
 | | Codex trace | Antigravity trace |

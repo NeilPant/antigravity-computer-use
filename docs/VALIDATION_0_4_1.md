@@ -1,5 +1,7 @@
 # 0.4.1 validation: browser flow startup
 
+**Role:** current live evidence for the [persistent runtime proposal](PERSISTENT_RUNTIME_DESIGN.md), together with the [source review](CUA_SOURCE_REVIEW.md). These observations supersede earlier status assumptions while retaining the distinctions between tested candidates. The proposed runtime has not been implemented or tested. See the [documentation guide](README.md).
+
 Recorded 2026-11-12. This is a targeted repair of failures observed in the installed 0.4.0 workflow, not a claim that everyday browsing is now fast.
 
 ## Environment and provenance

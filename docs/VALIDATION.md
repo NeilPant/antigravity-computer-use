@@ -1,6 +1,8 @@
-# Phase 1 validation runbook
+# Functional validation runbook
 
-For the optimization candidate, first inspect the plugin-namespaced `get_browser_state` bind result in scenario 3. It must show the exact `target_id` and the intended `tab_id` in model-visible text, and the subsequent navigation must use those returned values. If either ID is absent, stop without guessing, end the task session, and record the text result, structured result if available, and error. Compare time and tokens only after the browser form succeeds. The 2026-11-11 implementation was checked locally but has not been run interactively in Antigravity.
+**Scope:** reusable scenarios for the existing plugin. For current observed results, use [0.4.1 validation](VALIDATION_0_4_1.md). For proposed runtime acceptance and performance gates, use [the persistent runtime design](PERSISTENT_RUNTIME_DESIGN.md). The [documentation guide](README.md) explains precedence. Passing these basic scenarios alone does not establish the desired browsing performance.
+
+For the existing plugin, first inspect the plugin-namespaced `get_browser_state` bind result in scenario 3. It must show the exact `target_id` and the intended `tab_id` in model-visible text, and the subsequent navigation must use those returned values. If either ID is absent, stop without guessing, end the task session, and record the text result, structured result if available, and error. Compare time and tokens only after the browser form succeeds. Historical host versions and UI entry points below describe the original checks; confirm them against the intended test environment.
 
 Run live tests in Antigravity App and interactive Antigravity CLI. Run preflight and scenarios 1–4 on each surface and record the results separately. Use fresh conversations, synthetic data, and the same chat model across comparable runs. Capture the namespaced tool calls and final observed state before ending each run. A permission denial is a valid diagnostic result. Leave the permission preset and personal browser profiles as they were.
 

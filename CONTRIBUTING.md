@@ -6,6 +6,8 @@ These expectations apply to human and agent contributors alike.
 
 ## Agree on the work
 
+- Read the [documentation guide](docs/README.md) first. Current live evidence, the source review and the persistent runtime proposal supersede historical optimization assumptions. The proposal defines future direction; its implementation has not started and requires an agreed task.
+
 - Start from a maintainer-assigned task or an agreed issue. The [roadmap](docs/ROADMAP.md) describes priorities. Get agreement on the outcome, scope, and acceptance criteria before starting implementation.
 - Keep changes within that scope. Bring up unrelated bugs, refactors, and new ideas separately. Ask before expanding the task or changing the architecture.
 - Keep Antigravity in charge of the task and build on Cua Driver. Check what the installed tools already provide before adding another layer. Identify the gap that the proposed change will close.

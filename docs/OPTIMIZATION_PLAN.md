@@ -1,10 +1,14 @@
-# Antigravity Computer Use optimization plan
+# Superseded optimization plan — historical record
+
+**Status: superseded. Do not use this document to choose the next implementation.** The [persistent runtime design](PERSISTENT_RUNTIME_DESIGN.md), [source review](CUA_SOURCE_REVIEW.md) and [0.4.1 live validation](VALIDATION_0_4_1.md) take precedence. See the [documentation guide](README.md).
+
+The material below describes earlier candidates. Its package/version tables, thin-relay architecture, absence-of-live-testing statements and prioritization of binding metadata are historical. Later tests repaired metadata and startup failures but still failed the full browsing task. Existing Driver capabilities and remaining integration questions are established in the newer source review; the proposed next step is a programmable persistent runtime, with prerequisite contract checks still outstanding.
 
 Written: 2026-11-10. Implementation update: 2026-11-11.
 
 ## 0.3.0 follow-up
 
-See [the validation record](VALIDATION_0_3_0.md) for tested changes and current blockers. The installed Driver 0.44 rejects browser tools from `run_script`; browser-bootstrap scripts in the separate speed draft are not executable. No global fast-path or permission changes are part of this release. Native scripts are now exposed. The relay projects the actual browser control record (including errors/setup details), rather than requiring one guessed tab schema. Restart the MCP connection after updating.
+This historical follow-up concerned native script exposure and browser control metadata. Its referenced 0.3.0 validation file is not part of this checkout. Use the [0.4.1 validation record](VALIDATION_0_4_1.md) for later tested candidates and blockers; the former speed draft has been removed.
 
 ## Implementation status
 

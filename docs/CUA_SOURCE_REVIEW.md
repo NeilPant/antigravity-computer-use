@@ -1,5 +1,7 @@
 # CUA architecture source review
 
+**Role:** current mechanism and responsibility reference for the [persistent runtime design](PERSISTENT_RUNTIME_DESIGN.md). This review supersedes conflicting capability assumptions in the historical optimization plan. Use [0.4.1 validation](VALIDATION_0_4_1.md) for observed behavior and the [documentation guide](README.md) for precedence.
+
 Reviewed 2026-11-12 against the installed Codex runtime and the installed Cua Driver's exposed tool contracts. This is a source/contract review, not a new live performance measurement. The persistent runtime remains a proposal.
 
 ## What the supplied screenshots establish

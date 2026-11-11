@@ -2,7 +2,17 @@
 
 A plugin for Antigravity App and Antigravity CLI that operates macOS apps and browser pages from chat, including tasks that cross between them. Antigravity owns the conversation and decides what to do. The installed Cua Driver supplies window observations, browser state, and UI actions over its existing stdio MCP server. IDE support is deferred.
 
-**Status.** Phase 1 established end-to-end functionality in a live Antigravity browser task. Phase 2 focuses on speed, reliable browser routing, and clearer recovery when a target cannot be reached. See the [roadmap](docs/ROADMAP.md) and [live test runbook](docs/VALIDATION.md).
+**Status.** The 0.4.1 candidate repairs execution failures, but complete browsing efficiency remains unresolved. Live tests and source inspection now support a proposed persistent JS runtime over Cua Driver. That runtime has not been implemented; implementation is not starting as part of this documentation update.
+
+## Current direction: start here
+
+The following documents supersede the earlier optimization assumptions:
+
+1. [Persistent runtime design](docs/PERSISTENT_RUNTIME_DESIGN.md) — proposed architecture, prerequisite checks and acceptance gates.
+2. [CUA source review](docs/CUA_SOURCE_REVIEW.md) — verified mechanisms and plugin/Driver/host responsibilities.
+3. [0.4.1 validation](docs/VALIDATION_0_4_1.md) — live results, repaired failures and the remaining performance gap.
+
+See the [documentation guide](docs/README.md) for precedence and historical material, and the [roadmap](docs/ROADMAP.md) for the next agreed task. The existing browser-flow guide and functional runbook describe checks for the current plugin; they do not establish the future runtime or a measured speedup.
 
 ## Install once for App and CLI
 
@@ -19,7 +29,7 @@ agy plugin validate --strict "$project/plugin" &&
 
 After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.4.1`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface. Existing CLI processes must also reconnect or restart.
 
-The local 0.4.1 candidate repairs nested MCP metadata forwarding and isolated-browser startup, preserves snapshot coverage and exact binding handles, and exposes Cua's keyboard input mode for live filters. Skill guidance addresses eager schema reads, reused session labels and stale-ref batches. Form and mixed browser/native checks pass, but the real browsing task still failed to inspect images after nearly six minutes. These repairs do not establish everyday browsing efficiency; see the [validation record](docs/VALIDATION_0_4_1.md) before considering a merge.
+The 0.4.1 candidate repairs nested MCP metadata forwarding and isolated-browser startup, preserves snapshot coverage and exact binding handles, and exposes Cua's keyboard input mode for live filters. Skill guidance addresses eager schema reads, reused session labels and stale-ref batches. A form check and an earlier browser/native transfer candidate passed; the later real browsing task still failed to inspect images after nearly six minutes. These repairs do not establish everyday browsing efficiency; see the [validation record](docs/VALIDATION_0_4_1.md) for candidate-specific results before considering a merge.
 
 - **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and select the plugin’s `computer-use` skill from composer autocomplete.
 - **CLI:** Run `cd "$project" && agy` and type `/antigravity-computer-use:computer-use` in the interactive prompt.
@@ -32,8 +42,9 @@ The expected MCP server name is `antigravity-computer-use_cua-driver`. Try a pro
 - [Browser flow](docs/BROWSER_FLOW.md) compares the traces and shows how to check batching, retained state, and page excerpts manually.
 - [`fixtures/index.html`](fixtures/index.html) supplies the local browser form and one-time transfer token used in testing.
 - [`docs/VALIDATION.md`](docs/VALIDATION.md) has the live scenarios and provenance criteria.
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) records the evidence, decisions, checkpoint, and next phase.
-- [`docs/OPTIMIZATION_PLAN.md`](docs/OPTIMIZATION_PLAN.md) tracks the speed work, implementation status, and remaining browser result-contract investigation.
+- [`docs/README.md`](docs/README.md) identifies the current evidence, architecture proposal, supporting guides and superseded material.
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) summarizes the current direction and prerequisites for future implementation.
+- [`docs/OPTIMIZATION_PLAN.md`](docs/OPTIMIZATION_PLAN.md) preserves a superseded investigation for historical context.
 
 ## Contributing
 
