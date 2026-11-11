@@ -1,5 +1,10 @@
 # Antigravity Computer Use
 
+> [!IMPORTANT]
+> **Proposed fix: a persistent, programmable CUA runtime paired with a better browser observation API. Both are necessary.**
+>
+> [Start with the runtime design](docs/PERSISTENT_RUNTIME_DESIGN.md). Reuse existing Driver capabilities where adequate; a Driver API change remains conditional on the observation contract tests. Implementation has not started.
+
 A plugin for Antigravity App and Antigravity CLI that operates macOS apps and browser pages from chat, including tasks that cross between them. Antigravity owns the conversation and decides what to do. The installed Cua Driver supplies window observations, browser state, and UI actions over its existing stdio MCP server. IDE support is deferred.
 
 **Status.** The 0.4.1 candidate repairs execution failures, but complete browsing efficiency remains unresolved. Live tests and source inspection now support a proposed persistent JS runtime over Cua Driver. That runtime has not been implemented; implementation is not starting as part of this documentation update.
