@@ -18,6 +18,8 @@ These expectations apply to human and agent contributors alike.
 
 In the pull request, link the agreed task, state what changed, and include the commands or steps a reviewer can use to reproduce the result.
 
+Before publishing documentation or traces, replace user-specific filesystem paths and local conversation identifiers with portable commands and synthetic run labels. Use JST (UTC+09:00) for newly recorded timestamps and Git author/committer timezone metadata. Keep private provenance outside published files. Review commit history as well as the current files for identifying details.
+
 ## Live comparison for Codex agents
 
 Use Codex Computer Use as the reference for how efficiently the plugin should complete real tasks. For work on plugin behavior or performance, start with a live run and work backward from what happened.

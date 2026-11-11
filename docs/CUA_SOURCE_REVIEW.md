@@ -20,9 +20,9 @@ The screenshots' approximately 40,000-to-500–1,500-character reduction is not 
 
 Do not describe every screenshot detail as verified. Bundled implementation details are version-specific, and the NodeREPL engine itself was not audited here. In particular, this review does not establish an identical public Codex backend or a reusable public package contract.
 
-### Local source locations
+### Installed package source locations
 
-These are installed artifacts, not project dependencies or files to copy into this repository:
+These are package-relative locations in the installed runtime and bundled plugins. They identify the reviewed artifacts without publishing the machine’s filesystem layout:
 
 - `@oai/cua-repl/README.md`
 - `@oai/cua-repl/dist/lib/js/oai_js_cua_repl/src/launch.js`

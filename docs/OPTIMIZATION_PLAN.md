@@ -22,7 +22,7 @@ Local checks on 2026-11-11: `agy plugin validate --strict --json plugin` passed 
 
 Optimize the information and decision loop before adding execution machinery. The live run observed for this plan got stuck because browser binding exposed a summary without the tab identifier needed for the next call. Fix or conclusively diagnose that boundary first. Then reduce schema discovery, use the typed browser route, batch supported native actions, and return smaller observations without losing verification evidence.
 
-Treat performance improvements below as hypotheses and acceptance targets, not measured speedups. Preserve the existing untracked `SPEED_PLAN.md`; this document provides a separate, evidence-qualified implementation plan.
+Treat performance improvements below as hypotheses and acceptance targets, not measured speedups. For the current proposed runtime architecture and its validation gates, see [PERSISTENT_RUNTIME_DESIGN.md](PERSISTENT_RUNTIME_DESIGN.md).
 
 ## Project model
 
@@ -64,7 +64,7 @@ The current skill already supports narrow reads, native `run_steps` with `observ
 
 Codex operated Antigravity through built-in Computer Use, started a fresh project conversation, and submitted a synthetic browser benchmark. The selected model was Claude Opus 4.6 (Thinking); the existing Turbo preset was left unchanged. No plugin configuration was changed. App autocomplete did not match the literal qualified slash command; the submitted prompt instead explicitly requested the installed skill and plugin MCP server. The transcript showed the skill being read and subsequent plugin-namespaced calls.
 
-Conversation: `local-run`, titled **Antigravity Computer Use Benchmark**. Use this local conversation to reproduce the observations; no personal page contents or screenshots are included here.
+Evidence: an Antigravity App benchmark run. Reproduce it with the documented task and validation steps; local conversation identifiers are omitted.
 
 Prompt:
 
