@@ -17,7 +17,9 @@ agy plugin validate --strict "$project/plugin" &&
   agy plugin list
 ```
 
-After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.4.0`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface.
+After updating, restart the plugin's `cua-driver` MCP connection in App Customizations → Computer Use → MCP → More actions → Restart, then start a fresh conversation. Browser binding/setup results should show `Cua plugin relay 0.4.1`; an absent marker indicates an old or bypassed connection. Start a fresh conversation on either surface. Existing CLI processes must also reconnect or restart.
+
+The local 0.4.1 candidate repairs nested MCP metadata forwarding and isolated-browser startup, preserves snapshot coverage and exact binding handles, and exposes Cua's keyboard input mode for live filters. Skill guidance addresses eager schema reads, reused session labels and stale-ref batches. Form and mixed browser/native checks pass, but the real browsing task still failed to inspect images after nearly six minutes. These repairs do not establish everyday browsing efficiency; see the [validation record](docs/VALIDATION_0_4_1.md) before considering a merge.
 
 - **App:** Look for **Computer Use** under **Customizations → Installed**. Open the project and select the plugin’s `computer-use` skill from composer autocomplete.
 - **CLI:** Run `cd "$project" && agy` and type `/antigravity-computer-use:computer-use` in the interactive prompt.

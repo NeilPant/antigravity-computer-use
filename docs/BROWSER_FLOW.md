@@ -14,7 +14,7 @@ The workflow follows Cua's [typed browser contract](https://cua.ai/docs/cua-driv
 
 ## Manual verification
 
-Install plugin 0.4.0 and reconnect the MCP server using the [README](../README.md). Start the [local fixture](VALIDATION.md#prepare). In a fresh Antigravity conversation, ask it to use the following steps in one `antigravity-computer-use_cua-driver.browser_flow` call. Pick a new session label for every attempt. If Brave is the only browser, discover its running PID via the Driver and pass it as `browser_pid` on `open`.
+Install plugin 0.4.1 or later and reconnect the MCP server using the [README](../README.md). Version 0.4.0 drops per-request MCP metadata on nested calls and can fail before opening the browser. Start the [local fixture](VALIDATION.md#prepare). In a fresh Antigravity conversation, ask it to use the following steps in one `antigravity-computer-use_cua-driver.browser_flow` call. Pick a new session label for every attempt. If Brave is the only browser, discover its running PID via the Driver and pass it as `browser_pid` on `open`.
 
 ```json
 {
@@ -34,4 +34,4 @@ Check that the visible tool result includes the submitted text, the fresh-read m
 
 For retained state, use `open` → `navigate` → `read` with no `query` (a `terms` filter can keep the output short). In a second call on the same session, use `extract` with different terms and confirm `driver_calls: 0` and `source: "cached"`. After a mutation, `extract` should require a new read. On a long page with an observed Bottom link, batch `click` and a fresh, filtered `read` of the latest replies; verify the destination and actual coverage. Only request a screenshot when the task needs pixels.
 
-To measure speed, compare direct tools and flow on the same task, model, browser profile mode, and starting page in fresh conversations. Record success, elapsed time, host tool calls, nested Driver calls, and screenshots. The supplied logs motivate the change; no after-change benchmark was run.
+To measure speed, compare direct tools and flow on the same task, model, browser profile mode, and starting page in fresh conversations. Record success, elapsed time, host tool calls, nested Driver calls, and screenshots. The supplied logs motivated 0.4.0; the [0.4.1 validation record](VALIDATION_0_4_1.md) separates reproduced startup failures and live functional checks from a controlled performance benchmark. A matched before-and-after timing series has not established a general speedup.

@@ -8,7 +8,7 @@ import threading
 import uuid
 
 
-RELAY_VERSION = "0.4.0"
+RELAY_VERSION = "0.4.1"
 MAX_PROJECTION_BYTES = 24000
 
 
@@ -101,15 +101,20 @@ def main():
     def response(ident, result):
         to_host(encode({'jsonrpc': '2.0', 'id': ident, 'result': result}))
 
-    def send(name, args, timeout):
+    def send(name, args, timeout, request_params):
         # Use a private request ID so nested calls never appear as host tool calls.
         ident = 'cua-flow-' + uuid.uuid4().hex
         event, slot = threading.Event(), []
         with lock:
             internal[key(ident)] = (event, slot)
+        params = {'name': name, 'arguments': args}
+        # Modern MCP validates metadata on every request. Forward this outer
+        # request's envelope unchanged; never cache or invent client metadata.
+        if '_meta' in request_params:
+            params['_meta'] = request_params['_meta']
         try:
             to_driver(encode({'jsonrpc': '2.0', 'id': ident, 'method': 'tools/call',
-                              'params': {'name': name, 'arguments': args}}))
+                              'params': params}))
         except OSError as error:
             with lock:
                 internal.pop(key(ident), None)
@@ -127,10 +132,12 @@ def main():
     def tool_error(message):
         return {'isError': True, 'content': [{'type': 'text', 'text': message}]}
 
-    def run_flow(ident, args, cancelled):
+    def run_flow(ident, params, cancelled):
         nonlocal active
+        def send_for_request(name, args, timeout):
+            return send(name, args, timeout, params)
         try:
-            result = flows.run(args, send, cancelled)
+            result = flows.run(params.get('arguments'), send_for_request, cancelled)
         except Exception:
             result = tool_error('Browser flow failed internally. Reobserve the tab before retrying any action.')
             flows.end(None)
@@ -166,7 +173,7 @@ def main():
                                 continue
                             cancelled = threading.Event()
                             active = (ident, cancelled)
-                            threading.Thread(target=run_flow, args=(ident, params.get('arguments'), cancelled),
+                            threading.Thread(target=run_flow, args=(ident, params, cancelled),
                                              daemon=True).start()
                             continue
                         flows.invalidate(name, params.get('arguments') or {})

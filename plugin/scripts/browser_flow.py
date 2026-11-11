@@ -30,7 +30,8 @@ OPS = {
     "click": ({"name": STRING, "role": STRING, "ref": STRING}, []),
     "type": ({"name": STRING, "role": STRING, "ref": STRING,
               "text": {"type": "string", "maxLength": 8192},
-              "replace": {"type": "boolean"}}, ["text"]),
+              "replace": {"type": "boolean"},
+              "mode": {"enum": ["insert_text", "keystrokes"]}}, ["text"]),
     "end": ({}, []),
 }
 TOOL = {
@@ -42,8 +43,11 @@ TOOL = {
         "bind with an exact pid/window_id, or without them to refresh tabs for that window. "
         "Navigate directly to known URLs. Read returns a bounded excerpt; terms filter the saved "
         "snapshot, context includes nearby rows, edge:last selects from its end. Extract filters "
-        "the saved snapshot with no Driver call. Click/type require one exact accessible name "
+        "the saved snapshot with no Driver call but cannot enlarge partial coverage. Check complete, "
+        "omitted and continuation; zero cache matches do not prove absence from the page. "
+        "Click/type require one exact accessible name "
         "or a returned ref; role can disambiguate. Use read after an action to verify its effect. "
+        "Use type mode:keystrokes for search/filter inputs that require keyboard events. "
         "When a link opens a tab, bind again and select the returned tab_id explicitly. "
         "Only the last read may request a screenshot; end releases this task's session. "
         "Stops at the first error and never retries a mutation."
@@ -216,8 +220,11 @@ def _excerpt(data, options):
         "url": _page_url(data, snapshot),
         "snapshot_id": snapshot.get("snapshot_id", data.get("snapshot_id")),
         "matches": len(matches),
+        "matches_scope": "returned_snapshot",
         "rows": [lines[i] for i in sorted(emitted)],
         "excerpt_limited": len(selected) < len(matches) or len(emitted) < len(indices),
+        "complete": snapshot.get("complete"),
+        "omitted": snapshot.get("omitted"),
         "continuation": snapshot.get("continuation"),
         "truncated": snapshot.get("truncated", data.get("truncated")),
     }, [row if isinstance(row, str) else json.dumps(row, ensure_ascii=False) for row in evidence]
@@ -290,7 +297,8 @@ class BrowserFlows:
                 active[0] if len(active) == 1 else _tab_id(tabs[0]) if len(tabs) == 1 else None
             )
             state.update(window=(pid, window_id), binding={"target_id": target, "tab_id": selected, "tabs": tabs})
-            return {"tabs": _tab_view(tabs), "tab_count": len(tabs), "selected_tab_id": selected}
+            return {"target_id": target, "tabs": _tab_view(tabs),
+                    "tab_count": len(tabs), "selected_tab_id": selected}
 
         def pair():
             binding = state.get("binding", {})
@@ -361,18 +369,37 @@ class BrowserFlows:
                     if type(pid) is not int or pid <= 0:
                         raise FlowError("Isolated launch did not return a prepared PID. End this session before retrying.", upstream)
                     state["prepared_pid"] = pid
+                    attempted_windows, last_binding_error = set(), None
                     for attempt in range(5):
                         windows, _ = call("list_windows", pid=pid)
-                        candidates = [w["window_id"] for w in windows.get("windows", [])
+                        candidates = [w for w in windows.get("windows", [])
                                       if isinstance(w, dict) and w.get("pid") == pid and
                                       w.get("layer") == 0 and type(w.get("window_id")) is int]
-                        if candidates:
-                            break
+                        # Chromium can expose transient startup windows, even a
+                        # sole helper before its main window is ready. Reobserve
+                        # within the same budget and require an exact binding.
+                        if len(candidates) == 1:
+                            window = candidates[0]
+                            signature = json.dumps([window.get(key) for key in
+                                                    ("window_id", "title", "bounds")], sort_keys=True)
+                            if signature not in attempted_windows:
+                                attempted_windows.add(signature)
+                                try:
+                                    out = bind(pid, window["window_id"])
+                                    break
+                                except FlowError as error:
+                                    detail = (error.upstream or {}).get("structuredContent", {})
+                                    refusal = detail.get("refusal", {}) if isinstance(detail, dict) else {}
+                                    if not isinstance(refusal, dict) or refusal.get("code") != "browser_wrong_target_refused":
+                                        raise
+                                    last_binding_error = error
                         if attempt < 4:
                             cancelled.wait(0.35 * (attempt + 1))
-                    if len(candidates) != 1:
-                        raise FlowError(f"Prepared PID {pid}: expected one browser window; got {candidates}. Bind an exact window or end the session.")
-                    out = bind(pid, candidates[0])
+                    else:
+                        if len(candidates) == 1 and last_binding_error:
+                            raise last_binding_error
+                        ids = [window["window_id"] for window in candidates]
+                        raise FlowError(f"Prepared PID {pid}: expected one browser window; got {ids}. Bind an exact window or end the session.")
                 elif op == "bind":
                     window = (step["pid"], step["window_id"]) if "pid" in step else state.get("window")
                     if not window:
@@ -405,6 +432,8 @@ class BrowserFlows:
                         raise FlowError(f"{op} requires one matching action ref from the latest read; found {len(matches)}.")
                     state.pop("snapshot", None)
                     params = {"text": step["text"], "replace": step.get("replace", True)} if op == "type" else {}
+                    if op == "type" and "mode" in step:
+                        params["mode"] = step["mode"]
                     data, upstream = call(f"browser_{op}", **target, ref=matches[0], **params)
                     dialog = _body(data, ("dialog",)).get("dialog")
                     if isinstance(dialog, dict) and dialog.get("present"):
@@ -437,6 +466,7 @@ class BrowserFlows:
                 if texts:
                     response["driver_message"] = texts[0][:1200]
         if state.get("binding"):
+            response["target_id"] = state["binding"].get("target_id")
             response["selected_tab_id"] = state["binding"].get("tab_id")
         return {"isError": "error" in response, "structuredContent": response,
                 "content": [{"type": "text", "text": json.dumps(response, ensure_ascii=False,
